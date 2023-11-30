@@ -25,10 +25,11 @@ def login_user(request):
                 login(request, user)
                 return render(request, 'blog/homepage.html')
             else:
-                return render(request, 'blog/user_does_not_exist.html')
+                return render(request, 'blog/login_or_create_account.html')
             
     else:
-        return render(request, 'blog/login.html')
+        context = {'create_account' : False}
+        return render(request, 'blog/login_or_create_account.html', context)
 
 def create_user_account(request):
     
@@ -43,7 +44,8 @@ def create_user_account(request):
         if form.is_valid:
             try:
                 user = User.objects.get(username = username, email = user_email)
-                return render(request, 'blog/user_already_exists.html')
+                context = {'response' : 'Senha ou usuário incorretos.'}
+                return render(request, 'blog/login_or_create_account.html', context)
             except User.DoesNotExist:
                 user = User.objects.create_user(username = username, email = user_email, password = user_password)
                 user.save()
@@ -51,9 +53,10 @@ def create_user_account(request):
                 login(request, authenticated_user)
                 return render(request, 'blog/homepage.html')
         else:
-            return render(request, 'blog/homepage.html')
+            return render(request, 'blog/login_or_create_account.html', context)
     else:
-        return render(request, 'blog/create_account.html')
+        context = {'create_account' : True}
+        return render(request, 'blog/login_or_create_account.html', context)
     
 def post_details(request, slug):
     
