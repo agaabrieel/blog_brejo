@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <p>Olá</p>
+    </head>
+    <body>
+        <p>Faça login na sua conta do melhor blog existente</p>
+        <form method="post">
+            {% csrf_token %}
+            <input id="username" type="text" name="username" value="Nome de usuário">
+            <input id="password" type="text" name="password" value="Senha">
+            <input type="submit" value="OK">
+        </form>
+    </body>
+</html>
