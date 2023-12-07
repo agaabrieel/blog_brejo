@@ -16,6 +16,7 @@ class BlogPost(models.Model):
     
 class BlogComment(models.Model):
     owner = models.ForeignKey(User, name = 'owner', on_delete = models.CASCADE)
+    post = models.ForeignKey(BlogPost, name = 'post', on_delete = models.CASCADE)
     body = models.TextField(name = 'body')
     created_at = models.DateTimeField(auto_now_add = True)
     

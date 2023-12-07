@@ -9,10 +9,8 @@
                         <div class="column is-5 is-offset-1 ">
                             <form method="post">
                                 {% csrf_token %}
-                                <input id="username" type="text" name="username" value="Username">
-                                {% if create_account %}<input id="email" type="email" name="email" value="E-mail">{% endif %}
-                                <input id="password" type="password" name="password" value="Senha">
-                                <input type="submit" value="OK">
+                                {{ form }}
+                                <input type="submit" value="Login">
                             </form>
                         </div>
                     </div>

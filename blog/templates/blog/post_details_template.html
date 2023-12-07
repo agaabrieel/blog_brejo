@@ -15,6 +15,12 @@
                                 <p class="has-text-dark"><strong>{{ post.intro }}</strong></p>
                                 <p class="has-text-dark">{{ post.body }}</p>
                             </div>
+                            <div class = "content is-medium">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form }}
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </section>

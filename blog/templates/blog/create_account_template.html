@@ -1,0 +1,21 @@
+{% extends 'blog/base_template.html' %}
+
+{% block content %}
+    <section class="hero ">
+        <div class="hero-body">
+            <div class="container">
+                <section class="section">
+                    <div class="columns is-variable is-8">
+                        <div class="column is-5 is-offset-1 ">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form }}
+                                <input type="submit" value="Criar">
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+{% endblock %}
