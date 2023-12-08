@@ -20,6 +20,11 @@
                                     {% csrf_token %}
                                     {{ form }}
                                 </form>
+                            {% for comment in comments %} 
+                            <div class='comentario'>
+                                <p>{{ comment.body }}</p>
+                            </div>
+                            {% endfor %}
                             </div>
                         </div>
                     </div>

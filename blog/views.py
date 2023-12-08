@@ -9,7 +9,7 @@ from .models import BlogPost, BlogComment
 def index(request):
     posts = BlogPost.objects.all()
     
-    return render(request, 'blog/homepage.html', {'posts' : posts})
+    return render(request, 'blog/homepage_template.html', {'posts' : posts})
 
 def login_user(request):
     
@@ -40,8 +40,8 @@ def create_user_account(request):
     if request.method == 'POST':
         
         username = request.POST['username']
-        user_password = request.POST['password']
-        user_email = request.POST['email']
+        user_password = request.POST['user_password']
+        user_email = request.POST['user_email']
     
         form = CreateAccountForm(request.POST)
         
@@ -66,16 +66,12 @@ def create_user_account(request):
     
 def post_details(request, slug):
     
-    form = CommentForm(request.POST)
-    
     if request.method == 'POST':
-        if request.user.is_authenticated:
-            if form.is_valid:
-                post = BlogPost.objects.get(slug = slug)
-                comment = BlogComment.objects.create(owner = request.POST['username'], body = form.body, post = post)
-                comment.save()
-        else:
-            return render()
+        form = CommentForm(request.POST, user = request.user)
+        if form.is_valid:
+            post = BlogPost.objects.get(slug = slug)
+            comment = BlogComment.objects.create(owner = request.POST['username'], body = form.body, post = post)
+            comment.save()
 
     form = CommentForm(request.POST)
     post = get_object_or_404(BlogPost, slug = slug)
