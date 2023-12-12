@@ -15,23 +15,19 @@ def login_user(request):
     
     if request.method == 'POST':
         
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username = username, password = password)    
-        form = LoginForm(request.POST)
+        form = LoginForm(request.POST, user = request.user)
         
-        if form.is_valid:
-            if user is not None:
+        if form.is_valid():
+                username = request.POST['username']
+                password = request.POST['password']
+                user = authenticate(username = username, password = password)    
                 login(request, user)
                 return render(request, 'blog/homepage_template.html')
-            else:
-                context = {'response' : 'Senha ou nome de usuário incorreto.'}
-                return render(request, 'blog/user_login_error_template.html')
         else:
             context = {'response' : form.errors}
-            return render(request, 'blog/user_login_error_template.html')           
+            return render(request, 'blog/user_login_template.html')           
     else:
-        form = LoginForm(request.GET)
+        form = LoginForm(user = request.user)
         context = {'form' : form}
         return render(request, 'blog/user_login_template.html', context)
 
@@ -39,28 +35,22 @@ def create_user_account(request):
     
     if request.method == 'POST':
         
-        username = request.POST['username']
-        user_password = request.POST['user_password']
-        user_email = request.POST['user_email']
-    
-        form = CreateAccountForm(request.POST)
+        form = CreateAccountForm(request.POST, user = request.user)
         
-        if form.is_valid:
-            try:
-                user = User.objects.get(username = username, email = user_email)
-                context = {'response' : 'Já existe um usuário cadastrado com este e-mail/username.'}
-                return render(request, 'blog/create_account_error_template.html', context)
-            except User.DoesNotExist:
-                user = User.objects.create_user(username = username, email = user_email, password = user_password)
-                user.save()
-                authenticated_user = authenticate(username = username, password = user_password)
-                login(request, authenticated_user)
-                return render(request, 'blog/homepage_template.html')
+        if form.is_valid():
+            username = request.POST['username']
+            user_password = request.POST['user_password']
+            user_email = request.POST['user_email']
+            user = User.objects.create_user(username = username, email = user_email, password = user_password)
+            user.save()
+            authenticated_user = authenticate(username = username, password = user_password)
+            login(request, authenticated_user)
+            return render(request, 'blog/homepage_template.html')
         else:
             context = {'response' : form.errors}
-            return render(request, 'blog/create_account_error_template.html', context)
+            return render(request, 'blog/create_account_template.html', context)
     else:
-        form = CreateAccountForm()
+        form = CreateAccountForm(user = request.user)
         context = {'form' : form}
         return render(request, 'blog/create_account_template.html', context)
     
@@ -68,12 +58,13 @@ def post_details(request, slug):
     
     if request.method == 'POST':
         form = CommentForm(request.POST, user = request.user)
-        if form.is_valid:
+        if form.is_valid():
+            form_body = form.cleaned_data['body']
             post = BlogPost.objects.get(slug = slug)
-            comment = BlogComment.objects.create(owner = request.POST['username'], body = form.body, post = post)
+            comment = BlogComment.objects.create(owner = request.user, body = form_body, post = post)
             comment.save()
-
-    form = CommentForm(request.POST)
+            
+    form = CommentForm(user = request.user)
     post = get_object_or_404(BlogPost, slug = slug)
     comments = get_list_or_404(BlogComment, post = post)
     return render(request, 'blog/post_details_template.html', {'post' : post, 'comments' : comments, 'form' : form})
