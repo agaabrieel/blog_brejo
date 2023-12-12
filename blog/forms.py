@@ -34,7 +34,13 @@ class LoginForm(forms.Form):
         
         if User.objects.filter(username = data).count() == 0:
             raise ValidationError(_('Usuário ou senha incorretos.'))
+        
+        return data
             
+    def clean_password(self):
+        data = self.cleaned_data['password']
+        
+        return data
         
 class CommentForm(forms.Form):
     body = forms.CharField(max_length = 1000, required = True)
